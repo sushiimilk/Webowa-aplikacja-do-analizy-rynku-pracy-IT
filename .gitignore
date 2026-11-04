@@ -218,3 +218,45 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# ==============================
+# ASP.NET Core / .NET
+# ==============================
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rtifacts/
+*.pdb
+*.cache
+TestResults/
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# ==============================
+# React / Node.js / Vite
+# ==============================
+node_modules/
+dist/
+build/
+.vite/
+coverage/
+.npm/
+.eslintcache
+
+# ==============================
+# Environment variables
+# ==============================
+.env
+.env.*
+!.env.example
+
+# ==============================
+# ASP.NET Core secrets
+# ==============================
+secrets.json
