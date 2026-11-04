@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:52070",
+"RedirectUrl": "",
+"LaunchCommand": "npm run dev",
+"WorkingDirectory": "C:\\Users\\grzes\\Documents\\Inżynierka\\AplikacjaDoAnalizyRynkuPracy\\AplikacjaDoAnalizyRynkuPracy.Server\\..\\aplikacjadoanalizyrynkupracy.client",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}
