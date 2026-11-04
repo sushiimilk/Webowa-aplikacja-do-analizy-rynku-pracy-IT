@@ -221,8 +221,11 @@ __marimo__/
 
 
 # ==============================
-# ASP.NET Core / .NET
+# ASP.NET Core / .NET / Visual Studio
 # ==============================
+.vs/
+*.user
+*.suo
 [Bb]in/
 [Oo]bj/
 [Dd]ebug/
