@@ -263,3 +263,5 @@ coverage/
 # ASP.NET Core secrets
 # ==============================
 secrets.json
+
+.env
