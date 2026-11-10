@@ -1,4 +1,3 @@
-# Zależności modułu pobierania ofert (do uzupełnienia po wyborze źródeł)
 requests
 scrapy
 playwright

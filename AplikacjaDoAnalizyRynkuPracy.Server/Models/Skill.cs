@@ -1,6 +1,5 @@
 namespace AplikacjaDoAnalizyRynkuPracy.Server.Models;
 
-// Wspólny słownik umiejętności dla ofert i CV -> dopasowanie CV to JOIN po SkillId
 public class Skill
 {
     public int Id { get; set; }

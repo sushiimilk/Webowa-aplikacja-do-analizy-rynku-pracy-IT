@@ -27,7 +27,41 @@ docs/                                      # dokumentacja projektu
 
 ## Uruchomienie (dev)
 
-Wymagania: .NET 10 SDK, Node.js.
+Wymagania: .NET 10 SDK, Node.js, Docker Desktop (albo SQL Server LocalDB, patrz niżej).
+
+### Baza danych
+
+1. Skopiuj `.env.example` jako `.env` i ustaw własne hasło `MSSQL_SA_PASSWORD`: minimum 8 znaków i 3 z 4 kategorii (wielkie litery, małe litery, cyfry, symbole).
+2. Uruchom SQL Server w kontenerze:
+   ```bash
+   docker compose up -d
+   ```
+   Kontener nasłuchuje tylko na `127.0.0.1`. Stan sprawdzisz przez `docker compose ps`; po kilkunastu sekundach powinien mieć status `healthy`.
+3. Przekaż backendowi to samo hasło przez user-secrets. Hasło nie trafia do repozytorium:
+   ```bash
+   dotnet user-secrets set "Database:Password" "<hasło z .env>" --project AplikacjaDoAnalizyRynkuPracy.Server
+   ```
+4. Utwórz schemat bazy:
+   ```bash
+   dotnet tool restore
+   dotnet ef database update --project AplikacjaDoAnalizyRynkuPracy.Server
+   ```
+
+Connection string bez hasła jest w `appsettings.Development.json`. Backend dokleja do niego hasło z `Database:Password`.
+
+**Bez Dockera (LocalDB z Visual Studio):** nadpisz cały connection string w user-secrets i pomiń punkty 1–3:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:Default" "Server=(localdb)\MSSQLLocalDB;Database=RynekIT;Trusted_Connection=True;TrustServerCertificate=True" --project AplikacjaDoAnalizyRynkuPracy.Server
+```
+
+**Nowa migracja po zmianie modelu:**
+
+```bash
+dotnet ef migrations add NazwaZmiany --project AplikacjaDoAnalizyRynkuPracy.Server -o Data/Migrations
+```
+
+### Aplikacja
 
 ```bash
 cd aplikacjadoanalizyrynkupracy.client && npm install
@@ -36,6 +70,10 @@ cd ../AplikacjaDoAnalizyRynkuPracy.Server && dotnet run --launch-profile https
 
 Backend startuje frontend automatycznie (SPA proxy). Sprawdzenie API: `GET /api/health`.
 Albo po prostu F5 w Visual Studio.
+
+W trybie Development w konsoli widać zapytania SQL wysyłane przez EF Core, razem z wartościami parametrów.
+
+Schemat bazy i kontrakt scrapera: [docs/schemat-bazy.md](docs/schemat-bazy.md).
 
 ## Zespół
 

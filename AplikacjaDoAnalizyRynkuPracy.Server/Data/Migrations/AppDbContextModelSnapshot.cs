@@ -17,7 +17,7 @@ namespace AplikacjaDoAnalizyRynkuPracy.Server.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.14")
+                .HasAnnotation("ProductVersion", "10.0.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -187,7 +187,9 @@ namespace AplikacjaDoAnalizyRynkuPracy.Server.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("FetchedAt")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("SYSUTCDATETIME()");
 
                     b.Property<string>("Location")
                         .HasMaxLength(200)
@@ -252,7 +254,12 @@ namespace AplikacjaDoAnalizyRynkuPracy.Server.Data.Migrations
                     b.HasIndex("Source", "SourceOfferId")
                         .IsUnique();
 
-                    b.ToTable("Offers");
+                    b.ToTable("Offers", t =>
+                        {
+                            t.HasCheckConstraint("CK_Offers_SalaryNormalizedRange", "[SalaryMinNormalized] IS NULL OR [SalaryMaxNormalized] IS NULL OR [SalaryMinNormalized] <= [SalaryMaxNormalized]");
+
+                            t.HasCheckConstraint("CK_Offers_SalaryRange", "[SalaryMin] IS NULL OR [SalaryMax] IS NULL OR [SalaryMin] <= [SalaryMax]");
+                        });
                 });
 
             modelBuilder.Entity("AplikacjaDoAnalizyRynkuPracy.Server.Models.OfferSkill", b =>

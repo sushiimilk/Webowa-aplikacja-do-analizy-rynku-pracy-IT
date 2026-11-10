@@ -18,7 +18,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
     protected override void OnModelCreating(ModelBuilder b)
     {
-        base.OnModelCreating(b); // tworzy tabele Identity (AspNetUsers itd.)
+        base.OnModelCreating(b);
 
         b.Entity<Company>(e =>
         {
@@ -28,13 +28,20 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
         b.Entity<Offer>(e =>
         {
+            e.ToTable(t =>
+            {
+                t.HasCheckConstraint("CK_Offers_SalaryRange",
+                    "[SalaryMin] IS NULL OR [SalaryMax] IS NULL OR [SalaryMin] <= [SalaryMax]");
+                t.HasCheckConstraint("CK_Offers_SalaryNormalizedRange",
+                    "[SalaryMinNormalized] IS NULL OR [SalaryMaxNormalized] IS NULL OR [SalaryMinNormalized] <= [SalaryMaxNormalized]");
+            });
+
             e.Property(x => x.Source).HasMaxLength(50);
             e.Property(x => x.SourceOfferId).HasMaxLength(100);
             e.Property(x => x.SourceUrl).HasMaxLength(500);
             e.Property(x => x.Title).HasMaxLength(300);
             e.Property(x => x.Location).HasMaxLength(200);
 
-            // Enumy jako tekst - czytelne przy zapytaniach w DBeaverze
             e.Property(x => x.WorkMode).HasConversion<string>().HasMaxLength(20);
             e.Property(x => x.SalaryPeriod).HasConversion<string>().HasMaxLength(10);
 
@@ -44,10 +51,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             e.Property(x => x.SalaryMinNormalized).HasPrecision(12, 2);
             e.Property(x => x.SalaryMaxNormalized).HasPrecision(12, 2);
 
-            // Deduplikacja na poziomie bazy; złożona, bo ID może się powtórzyć między źródłami
+            e.Property(x => x.FetchedAt).HasDefaultValueSql("SYSUTCDATETIME()");
+
             e.HasIndex(x => new { x.Source, x.SourceOfferId }).IsUnique();
 
-            // Usunięcie firmy nie kasuje po cichu jej ofert
             e.HasOne(x => x.Company)
              .WithMany(c => c.Offers)
              .HasForeignKey(x => x.CompanyId)
@@ -83,7 +90,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
             e.Property(x => x.SourceUrl).HasMaxLength(500);
             e.Property(x => x.FetchedAt).HasDefaultValueSql("SYSUTCDATETIME()");
             e.HasIndex(x => new { x.Source, x.SourceOfferId }).IsUnique();
-            e.HasIndex(x => x.ProcessedAt); // szybkie wyszukiwanie nieprzetworzonych
+            e.HasIndex(x => x.ProcessedAt);
         });
     }
 }
