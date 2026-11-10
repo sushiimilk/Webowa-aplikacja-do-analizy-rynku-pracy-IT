@@ -1,0 +1,24 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RynekIT.Domain/RynekIT.Domain.csproj" />
+    <Project Path="src/RynekIT.Application/RynekIT.Application.csproj" />
+    <Project Path="src/RynekIT.Infrastructure/RynekIT.Infrastructure.csproj" />
+    <Project Path="src/RynekIT.Api/RynekIT.Api.csproj" />
+    <Project Path="src/web/web.esproj">
+      <Build />
+      <Deploy />
+    </Project>
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RynekIT.Application.UnitTests/RynekIT.Application.UnitTests.csproj" />
+    <Project Path="tests/RynekIT.ArchitectureTests/RynekIT.ArchitectureTests.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path=".editorconfig" />
+    <File Path="docker-compose.yml" />
+    <File Path="README.md" />
+  </Folder>
+</Solution>

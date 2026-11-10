@@ -1,0 +1,11 @@
+@Host = http://localhost:5051
+
+GET {{Host}}/api/health
+Accept: application/json
+
+###
+
+GET {{Host}}/api/offers?phrase=developer&workMode=Remote&page=1&pageSize=10
+Accept: application/json
+
+###
