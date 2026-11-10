@@ -1,4 +1,4 @@
-#Schemat bazy danych RynekIT
+# Schemat bazy danych RynekIT
 
 Diagram aktualny dla migracji `InitialSchema`. Tabele ASP.NET Core Identity pominięte, poza `AspNetUsers`.
 
