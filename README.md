@@ -1,79 +1,97 @@
-# Webowa aplikacja do analizy rynku pracy IT
+# RynekIT – analiza rynku pracy IT
 
-Projekt inżynierski: aplikacja pobierająca oferty pracy IT z wybranych źródeł,
-z wyszukiwarką, panelem analitycznym (KPI, popularność technologii)
-oraz dopasowaniem CV do ofert.
+Projekt inżynierski: aplikacja webowa, która pobiera oferty pracy IT z wybranych źródeł, udostępnia wyszukiwarkę, panel analityczny (KPI, popularność technologii) oraz dopasowanie CV do ofert.
+
+| Warstwa | Technologia |
+|---|---|
+| Backend | ASP.NET Core 10 (Minimal API), Entity Framework Core, ASP.NET Core Identity |
+| Baza danych | Microsoft SQL Server 2022 (lokalnie w Dockerze) |
+| Frontend | React 19, TypeScript, Vite |
+| Pobieranie danych | Python 3.12+ (requests, Scrapy, Playwright) |
+| CI | GitHub Actions |
 
 ## Struktura repozytorium
 
 ```
-AplikacjaDoAnalizyRynkuPracy.slnx          # rozwiązanie Visual Studio
-AplikacjaDoAnalizyRynkuPracy.Server/       # backend – ASP.NET Core Web API (.NET 10)
-├── Controllers/                           # endpointy REST (/api/...)
-├── Data/                                  # DbContext EF Core, migracje
-├── Models/                                # encje bazy (Offer, Company, Skill, User...)
-├── Dtos/                                  # obiekty zwracane przez API
-└── Services/                              # logika: wyszukiwanie, analityka, dopasowanie CV
-aplikacjadoanalizyrynkupracy.client/       # frontend – React + Vite
-└── src/
-    ├── api/                               # komunikacja z backendem
-    ├── components/                        # komponenty wielokrotnego użytku
-    ├── pages/                             # widoki: wyszukiwarka, panel, CV, ulubione
-    └── hooks/                             # własne hooki React
-scraper/                                   # pobieranie ofert – Python (REST API, Scrapy, Playwright)
-└── sources/                               # osobny moduł na każde źródło danych
-docs/                                      # dokumentacja projektu
+.
+├── src/
+│   ├── RynekIT.Domain/            encje biznesowe – bez żadnych zależności
+│   ├── RynekIT.Application/       przypadki użycia (jeden folder = jedna operacja)
+│   ├── RynekIT.Infrastructure/    baza danych (EF Core), konta użytkowników (Identity)
+│   ├── RynekIT.Api/               punkt wejścia: endpointy HTTP /api/...
+│   ├── web/                       frontend React + TypeScript
+│   └── scraper/                   pobieranie ofert (Python)
+├── tests/
+│   ├── RynekIT.Application.UnitTests/
+│   └── RynekIT.ArchitectureTests/ pilnuje zasad Clean Architecture
+├── docs/                          schemat bazy, decyzje architektoniczne (ADR)
+├── .github/                       CI i szablon Pull Requesta
+├── Directory.Build.props          wspólne ustawienia wszystkich projektów .NET
+├── Directory.Packages.props       wersje wszystkich pakietów NuGet w jednym miejscu
+├── global.json                    wymagana wersja .NET SDK
+├── .editorconfig                  wspólny styl kodu
+├── docker-compose.yml             SQL Server do pracy lokalnej
+└── RynekIT.slnx                   solucja Visual Studio
 ```
 
-## Uruchomienie (dev)
+Backend jest zbudowany według **Clean Architecture**: zależności idą tylko do środka (`Api → Application → Domain`, `Infrastructure → Application`). Szczegóły i uzasadnienie: [src/README.md](src/README.md) i [docs/adr/0001-clean-architecture.md](docs/adr/0001-clean-architecture.md).
 
-Wymagania: .NET 10 SDK, Node.js, Docker Desktop (albo SQL Server LocalDB, patrz niżej).
+**W każdym folderze jest plik README** z wyjaśnieniem, do czego służy folder i jak z niego korzystać.
 
-### Baza danych
+## Uruchomienie lokalne
+
+Wymagania: .NET 10 SDK, Node.js 22+, Docker Desktop (albo SQL Server LocalDB), Python 3.12+ (tylko do scrapera).
+
+### 1. Baza danych
 
 1. Skopiuj `.env.example` jako `.env` i ustaw własne hasło `MSSQL_SA_PASSWORD`: minimum 8 znaków i 3 z 4 kategorii (wielkie litery, małe litery, cyfry, symbole).
 2. Uruchom SQL Server w kontenerze:
    ```bash
    docker compose up -d
    ```
-   Kontener nasłuchuje tylko na `127.0.0.1`. Stan sprawdzisz przez `docker compose ps`; po kilkunastu sekundach powinien mieć status `healthy`.
-3. Przekaż backendowi to samo hasło przez user-secrets. Hasło nie trafia do repozytorium:
+   Kontener nasłuchuje tylko na `127.0.0.1`. Po kilkunastu sekundach `docker compose ps` powinien pokazać status `healthy`.
+3. Przekaż backendowi to samo hasło przez user-secrets (hasło nie trafia do repozytorium):
    ```bash
-   dotnet user-secrets set "Database:Password" "<hasło z .env>" --project AplikacjaDoAnalizyRynkuPracy.Server
+   dotnet user-secrets set "Database:Password" "<hasło z .env>" --project src/RynekIT.Api
    ```
 4. Utwórz schemat bazy:
    ```bash
    dotnet tool restore
-   dotnet ef database update --project AplikacjaDoAnalizyRynkuPracy.Server
+   dotnet ef database update --project src/RynekIT.Infrastructure --startup-project src/RynekIT.Api
    ```
 
-Connection string bez hasła jest w `appsettings.Development.json`. Backend dokleja do niego hasło z `Database:Password`.
-
-**Bez Dockera (LocalDB z Visual Studio):** nadpisz cały connection string w user-secrets i pomiń punkty 1–3:
+**Bez Dockera (LocalDB z Visual Studio):** pomiń punkty 1–3 i ustaw cały connection string:
 
 ```bash
-dotnet user-secrets set "ConnectionStrings:Default" "Server=(localdb)\MSSQLLocalDB;Database=RynekIT;Trusted_Connection=True;TrustServerCertificate=True" --project AplikacjaDoAnalizyRynkuPracy.Server
+dotnet user-secrets set "ConnectionStrings:Default" "Server=(localdb)\MSSQLLocalDB;Database=RynekIT;Trusted_Connection=True;TrustServerCertificate=True" --project src/RynekIT.Api
 ```
 
-**Nowa migracja po zmianie modelu:**
+### 2. Aplikacja
 
 ```bash
-dotnet ef migrations add NazwaZmiany --project AplikacjaDoAnalizyRynkuPracy.Server -o Data/Migrations
+cd src/web && npm install && cd ../..
+dotnet run --project src/RynekIT.Api --launch-profile https
 ```
 
-### Aplikacja
+Albo F5 w Visual Studio (projekt startowy: `RynekIT.Api`). Backend sam uruchamia frontend.
+
+- Aplikacja: https://localhost:52070
+- API: https://localhost:7119/api/health
+- Opis API (OpenAPI): https://localhost:7119/openapi/v1.json
+
+### 3. Testy
 
 ```bash
-cd aplikacjadoanalizyrynkupracy.client && npm install
-cd ../AplikacjaDoAnalizyRynkuPracy.Server && dotnet run --launch-profile https
+dotnet test                                     # backend
+cd src/web && npm run lint && npm run build     # frontend
+cd src/scraper && pytest && ruff check .        # scraper
 ```
 
-Backend startuje frontend automatycznie (SPA proxy). Sprawdzenie API: `GET /api/health`.
-Albo po prostu F5 w Visual Studio.
+## Dokumentacja
 
-W trybie Development w konsoli widać zapytania SQL wysyłane przez EF Core, razem z wartościami parametrów.
-
-Schemat bazy i kontrakt scrapera: [docs/schemat-bazy.md](docs/schemat-bazy.md).
+- [Schemat bazy danych i kontrakt scrapera](docs/schemat-bazy.md)
+- [Decyzje architektoniczne (ADR)](docs/adr/README.md)
+- [Zasady pracy w zespole](CONTRIBUTING.md)
 
 ## Zespół
 

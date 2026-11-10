@@ -1,7 +1,0 @@
-<Solution>
-  <Project Path="aplikacjadoanalizyrynkupracy.client/aplikacjadoanalizyrynkupracy.client.esproj">
-    <Build />
-    <Deploy />
-  </Project>
-  <Project Path="AplikacjaDoAnalizyRynkuPracy.Server/AplikacjaDoAnalizyRynkuPracy.Server.csproj" />
-</Solution>
