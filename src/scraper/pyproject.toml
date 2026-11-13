@@ -7,6 +7,8 @@ name = "rynekit-scraper"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
+    "pyodbc",
+    "python-dotenv",
     "requests",
     "scrapy",
     "playwright",
