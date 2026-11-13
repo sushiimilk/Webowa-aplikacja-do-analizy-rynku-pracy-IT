@@ -10,5 +10,10 @@ internal sealed class SkillConfiguration : IEntityTypeConfiguration<Skill>
     {
         builder.Property(x => x.Name).HasMaxLength(100);
         builder.HasIndex(x => x.Name).IsUnique();
+
+        builder.Property(x => x.Category)
+            .HasConversion<string>()
+            .HasMaxLength(20)
+            .HasDefaultValue(SkillCategory.Other);
     }
 }
