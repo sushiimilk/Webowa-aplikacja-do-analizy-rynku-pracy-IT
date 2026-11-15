@@ -1,0 +1,29 @@
+[
+  {"last_updated": 1793804949, "legal": "API Terms of Service: Please link back (without nofollow) to the URL on Remote OK and mention Remote OK as a source."},
+  {
+    "slug": "remote-senior-python-developer-acme-123",
+    "id": "123",
+    "epoch": 1793721625,
+    "date": "2026-11-03T16:00:25+00:00",
+    "company": "Acme",
+    "position": "Senior Python Developer",
+    "tags": ["python", "sql", "aws"],
+    "location": "MÃ¼nchen",
+    "salary_min": 90000,
+    "salary_max": 120000,
+    "url": "https://remoteOK.com/remote-jobs/remote-senior-python-developer-acme-123"
+  },
+  {
+    "slug": "remote-frontend-engineer-globex-456",
+    "id": "456",
+    "epoch": 1793635225,
+    "date": "2026-11-02T16:00:25+00:00",
+    "company": "Globex",
+    "position": "Frontend Engineer",
+    "tags": ["react", "typescript"],
+    "location": "Worldwide",
+    "salary_min": 0,
+    "salary_max": 0,
+    "url": "https://remoteOK.com/remote-jobs/remote-frontend-engineer-globex-456"
+  }
+]

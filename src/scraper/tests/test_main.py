@@ -14,8 +14,23 @@ class FakeSource(OfferSource):
 
 
 def test_run_counts_offers_from_all_sources() -> None:
-    assert run([FakeSource(), FakeSource()]) == 4
+    assert run([FakeSource(), FakeSource()], save=lambda offer: None) == 4
+
+
+def test_run_passes_every_offer_to_save() -> None:
+    saved: list[RawOffer] = []
+    run([FakeSource()], save=saved.append)
+    assert [offer.source_offer_id for offer in saved] == ["1", "2"]
 
 
 def test_run_without_sources_returns_zero() -> None:
-    assert run([]) == 0
+    assert run([], save=lambda offer: None) == 0
+
+class BrokenSource(OfferSource):
+    name = "broken"
+
+    def fetch(self) -> Iterable[RawOffer]:
+        raise RuntimeError("Source not responding")
+
+def test_failing_source_does_not_stop_run() -> None:
+    assert run([BrokenSource(), FakeSource()], save=lambda offer: None) == 2
