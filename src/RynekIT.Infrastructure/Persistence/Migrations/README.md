@@ -4,6 +4,12 @@ Migracja to plik C# opisujący jedną zmianę schematu bazy, np. „dodaj tabel�
 
 **Tych plików nie edytujemy ręcznie.** Generuje je narzędzie `dotnet ef`.
 
+Wyjątek: do wygenerowanej migracji wolno dopisać kroki `migrationBuilder.Sql(...)` (dane słownikowe, procedury, migracje danych), których EF nie umie wygenerować sam. Zasady:
+
+- Dopisane kroki opisz komentarzem w migracji. Po `migrations remove` i ponownym `migrations add` trzeba je przenieść ręcznie, bo narzędzie ich nie odtworzy.
+- Procedury i inne długie skrypty trzymaj w [`../Sql/`](../Sql/README.md) jako wersjonowane pliki `.sql`, a w migracji tylko je ładuj (`SqlScripts.Load(...)`). Nie wklejaj całych procedur do migracji.
+- `Down()` powinno cofać `Up()`. Jeśli migracja danych jest nieodwracalna (np. scalenie rekordów), napisz to w komentarzu.
+
 ## Typowy scenariusz
 
 1. Zmieniasz encję w `Domain` albo konfigurację w `Configurations/`.

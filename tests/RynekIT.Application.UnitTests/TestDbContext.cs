@@ -11,6 +11,7 @@ internal sealed class TestDbContext(DbContextOptions<TestDbContext> options) : D
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<Offer> Offers => Set<Offer>();
     public DbSet<Skill> Skills => Set<Skill>();
+    public DbSet<SkillAlias> SkillAliases => Set<SkillAlias>();
     public DbSet<OfferSkill> OfferSkills => Set<OfferSkill>();
     public DbSet<FavoriteOffer> FavoriteOffers => Set<FavoriteOffer>();
     public DbSet<Cv> Cvs => Set<Cv>();
