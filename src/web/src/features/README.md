@@ -13,10 +13,22 @@ Opcjonalnie: `hooks/` (własne hooki), `utils/` (funkcje pomocnicze).
 
 | Folder | Funkcja |
 |---|---|
-| `offers/` | Lista i wyszukiwarka ofert |
+| `offers/` | Lista i wyszukiwarka ofert (backend: `GET /api/offers`) |
+| `analytics/` | Wskaźniki rynku i popularność technologii (**na mockach**) |
+| `cv/` | Wgranie CV i dopasowanie do ofert (**na mockach**) |
 | `system-status/` | Wskaźnik, czy backend działa |
 
-Planowane: `analytics/` (panel KPI i wykresy), `cv/` (dopasowanie CV), `auth/` (logowanie), `favorites/` (ulubione).
+Planowane: `auth/` (logowanie), `favorites/` (ulubione).
+
+## Kolejność pracy nad funkcją
+
+```
+types.ts → api/ → components/ → strona XPage.tsx → trasa w app/router.tsx
+```
+
+## Mocki
+
+Gdy backend nie ma jeszcze endpointu, funkcja w `api/` zwraca dane z `api/mock-data.ts` przez `fakeRequest` z `@/lib/fake-request`. Kształt danych jest taki sam jak docelowy, więc komponenty nie wiedzą, że to mock. Po podłączeniu backendu zmienia się tylko wnętrze funkcji w `api/` (komentarz `TODO` mówi, na co), a `mock-data.ts` się usuwa.
 
 ## Zasady
 

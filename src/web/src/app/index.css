@@ -2,8 +2,74 @@
     font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.5;
     color-scheme: light dark;
+
+    --color-bg: #f6f7f9;
+    --color-surface: #ffffff;
+    --color-text: #1d2330;
+    --color-muted: #5f6b7a;
+    --color-border: #dfe3e8;
+    --color-accent: #2f6fde;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-bg: #12151b;
+        --color-surface: #1b1f27;
+        --color-text: #e6e9ee;
+        --color-muted: #9aa4b2;
+        --color-border: #2c323d;
+        --color-accent: #6c9cf0;
+    }
 }
 
 body {
     margin: 0;
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+/* pola formularzy i przyciski - wspolny wyglad w calej aplikacji */
+input,
+select,
+button {
+    font: inherit;
+    color: inherit;
+}
+
+input,
+select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-surface);
+}
+
+input:focus,
+select:focus,
+button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+}
+
+.button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-surface);
+    cursor: pointer;
+}
+
+.button:hover:not(:disabled) {
+    border-color: var(--color-accent);
+}
+
+.button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.button--primary {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
 }

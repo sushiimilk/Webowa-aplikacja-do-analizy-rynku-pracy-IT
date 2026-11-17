@@ -1,0 +1,72 @@
+.offers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.offer-card {
+    padding: 1rem 1.25rem;
+    border-radius: 10px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+}
+
+.offer-card__title {
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.offer-card__title:hover {
+    color: var(--color-accent);
+}
+
+.offer-card__details {
+    margin: 0.25rem 0 0.75rem;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+}
+
+.offer-card__salary {
+    margin: 0;
+    font-weight: 600;
+}
+
+.offer-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.offer-filters__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    color: var(--color-muted);
+}
+
+.offer-filters__field--grow {
+    flex: 1 1 260px;
+}
+
+.offer-filters__actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.offers-count {
+    margin: 0 0 0.75rem;
+    color: var(--color-muted);
+    font-size: 0.9rem;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}

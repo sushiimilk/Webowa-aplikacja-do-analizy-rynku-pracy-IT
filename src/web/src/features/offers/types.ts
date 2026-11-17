@@ -13,6 +13,11 @@ export type OfferListItem = {
     publishedAt: string | null;
 };
 
+export type OfferFilters = {
+    phrase: string;
+    workMode: WorkMode | null;
+};
+
 export type PagedResult<T> = {
     items: T[];
     page: number;
