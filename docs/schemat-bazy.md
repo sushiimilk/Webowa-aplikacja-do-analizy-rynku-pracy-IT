@@ -1,12 +1,13 @@
 # Schemat bazy danych RynekIT
 
-Diagram aktualny dla migracji `SalaryChecksAndFetchedAtDefault`. Tabele ASP.NET Core Identity pominięte, poza `AspNetUsers`.
+Diagram aktualny dla migracji `AddSkillCategoryAndAliases`. Tabele ASP.NET Core Identity pominięte, poza `AspNetUsers`.
 
 ```mermaid
 erDiagram
     Companies ||--o{ Offers : "publikuje"
     Offers ||--o{ OfferSkills : "wymaga"
     Skills ||--o{ OfferSkills : ""
+    Skills ||--o{ SkillAliases : "ma warianty zapisu"
     AspNetUsers ||--o{ Cvs : "wgrywa"
     Cvs ||--o{ CvSkills : "zawiera"
     Skills ||--o{ CvSkills : ""
@@ -40,6 +41,12 @@ erDiagram
     Skills {
         int Id PK
         nvarchar Name UK
+        nvarchar Category "Other / Technology / Role / Level"
+    }
+    SkillAliases {
+        int Id PK
+        nvarchar Alias UK "np. node.js, k8s"
+        int SkillId FK "skill docelowy"
     }
     OfferSkills {
         int OfferId PK, FK
@@ -99,6 +106,22 @@ erDiagram
 - `Skills` to wspólny słownik dla ofert i CV, więc dopasowanie CV do oferty to złączenie po `SkillId`.
 - Konta użytkowników obsługuje ASP.NET Core Identity (`AppUser : IdentityUser`). Aplikacja nie przechowuje haseł samodzielnie, tylko ich skróty.
 - Kolumny z datą utworzenia (`Offers.FetchedAt`, `RawOffers.FetchedAt`, `Cvs.UploadedAt`, `FavoriteOffers.CreatedAt`) mają domyślną wartość `SYSUTCDATETIME()`.
+
+### Słownik technologii i aliasy
+
+- `Skills.Category` to enum zapisany jako tekst (`nvarchar(20)`), z wartościami `Other`, `Technology`, `Role`, `Level`. Domyślna wartość to `Other`.
+- Migracja `AddSkillCategoryAndAliases` zakłada słownik znanych skilli z kategoriami. Tagi spoza słownika dostają kategorię `Other`.
+- `SkillAliases` mapuje wariant zapisu (np. `node.js`, `nodejs`, `k8s`) na skill docelowy (`node`, `kubernetes`). `Alias` jest unikalny, a usunięcie skilla usuwa jego aliasy.
+- Nazwy skilli i aliasów zapisujemy małymi literami, bez spacji na początku i końcu, maksymalnie 100 znaków (tak samo normalizuje je ETL).
+
+Przepływ tagu z Remote OK do słownika:
+
+1. Scraper zapisuje ofertę z tagami do `stg.RawOffers`.
+2. `stg.usp_ProcessRawOffers` normalizuje każdy tag (`LOWER`, `TRIM`, obcięcie do 100 znaków) i jeśli tag jest aliasem, zamienia go na nazwę skilla docelowego.
+3. Tag, którego nie ma w `Skills`, trafia do słownika jako nowy skill z kategorią `Other`.
+4. W każdym przebiegu ETL `dbo.usp_MergeSkillAliases` scala duplikaty: skill, którego nazwa jest aliasem innego skilla, oddaje swoje powiązania z ofertami i CV skillowi docelowemu i jest usuwany. Dzięki temu alias dodany później (np. `vue.js` → `vue` przy istniejącym skillu `vue.js`) zostanie scalony przy następnym uruchomieniu ETL. Łańcuch aliasów (alias wskazuje na skill, który sam jest duplikatem) jest rozwiązywany do skilla końcowego. Cykl aliasów (np. `a` → `b` i `b` → `a`) kończy procedurę błędem 50001 i wymaga ręcznej poprawki `SkillAliases`.
+
+Scalenie duplikatów jest nieodwracalne: cofnięcie migracji nie przywróci usuniętych skilli ani ich pierwotnych powiązań.
 
 ## Kontrakt scrapera ze `stg.RawOffers`
 
