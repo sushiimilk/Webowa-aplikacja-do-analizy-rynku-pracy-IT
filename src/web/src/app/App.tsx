@@ -1,13 +1,7 @@
-import { OffersList } from '@/features/offers/components/OffersList';
-import { BackendStatus } from '@/features/system-status/components/BackendStatus';
+import { RouterProvider } from 'react-router/dom';
+import { router } from './router';
 import './app.css';
 
 export function App() {
-    return (
-        <main>
-            <h1>Analiza rynku pracy IT</h1>
-            <BackendStatus />
-            <OffersList />
-        </main>
-    );
+    return <RouterProvider router={router} />;
 }
