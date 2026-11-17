@@ -14,4 +14,7 @@ Procedury składowane i inne długie skrypty, które migracje tworzą w bazie. P
 |---|---|---|
 | `usp_ProcessRawOffers.v1.sql` | ETL `stg.RawOffers` → `Offers`/`Skills` (tagi bez aliasów) | `AddProcessRawOffersProcedure` (Down dla `AddSkillCategoryAndAliases`) |
 | `usp_ProcessRawOffers.v2.sql` | ETL z zamianą aliasów na skill docelowy i scalaniem duplikatów | `AddSkillCategoryAndAliases` |
-| `usp_MergeSkillAliases.sql` | Przepina oferty i CV z duplikatów (skill o nazwie będącej aliasem) na skill docelowy i usuwa duplikaty | `AddSkillCategoryAndAliases` |
+| `usp_MergeSkillAliases.sql` | Przepina oferty i CV z duplikatów (skill o nazwie będącej aliasem) na skill docelowy i usuwa duplikaty | `AddSkillCategoryAndAliases` (Down dla `FixMergeSkillAliasesChains`) |
+| `usp_MergeSkillAliases.v2.sql` | Jak wyżej, ale łańcuchy aliasów (alias → skill, który sam jest duplikatem) rozwiązuje do skilla końcowego, a przy cyklu aliasów kończy się błędem zamiast usuwać powiązania | `FixMergeSkillAliasesChains` |
+
+Plik `usp_MergeSkillAliases.sql` nie ma numeru wersji, bo powstał przed tą zasadą. Traktujemy go jako v1.

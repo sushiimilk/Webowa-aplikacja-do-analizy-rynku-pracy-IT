@@ -12,6 +12,7 @@ internal static class SqlScripts
     public const string ProcessRawOffersV1 = "usp_ProcessRawOffers.v1.sql";
     public const string ProcessRawOffersV2 = "usp_ProcessRawOffers.v2.sql";
     public const string MergeSkillAliases = "usp_MergeSkillAliases.sql";
+    public const string MergeSkillAliasesV2 = "usp_MergeSkillAliases.v2.sql";
 
     public static string Load(string fileName)
     {
