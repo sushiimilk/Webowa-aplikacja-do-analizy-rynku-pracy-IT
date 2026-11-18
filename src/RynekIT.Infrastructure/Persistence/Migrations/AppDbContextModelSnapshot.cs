@@ -289,6 +289,11 @@ namespace RynekIT.Infrastructure.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -300,6 +305,32 @@ namespace RynekIT.Infrastructure.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Skills");
+                });
+
+            modelBuilder.Entity("RynekIT.Domain.Skills.SkillAlias", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("SkillId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Alias")
+                        .IsUnique();
+
+                    b.HasIndex("SkillId");
+
+                    b.ToTable("SkillAliases");
                 });
 
             modelBuilder.Entity("RynekIT.Domain.Users.Cv", b =>
@@ -557,6 +588,17 @@ namespace RynekIT.Infrastructure.Persistence.Migrations
                     b.Navigation("Skill");
                 });
 
+            modelBuilder.Entity("RynekIT.Domain.Skills.SkillAlias", b =>
+                {
+                    b.HasOne("RynekIT.Domain.Skills.Skill", "Skill")
+                        .WithMany("Aliases")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Skill");
+                });
+
             modelBuilder.Entity("RynekIT.Domain.Users.Cv", b =>
                 {
                     b.HasOne("RynekIT.Infrastructure.Identity.AppUser", null)
@@ -616,6 +658,8 @@ namespace RynekIT.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("RynekIT.Domain.Skills.Skill", b =>
                 {
+                    b.Navigation("Aliases");
+
                     b.Navigation("CvSkills");
 
                     b.Navigation("OfferSkills");

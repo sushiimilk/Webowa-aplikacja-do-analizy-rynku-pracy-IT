@@ -10,6 +10,7 @@ public interface IAppDbContext
     DbSet<Company> Companies { get; }
     DbSet<Offer> Offers { get; }
     DbSet<Skill> Skills { get; }
+    DbSet<SkillAlias> SkillAliases { get; }
     DbSet<OfferSkill> OfferSkills { get; }
     DbSet<FavoriteOffer> FavoriteOffers { get; }
     DbSet<Cv> Cvs { get; }
