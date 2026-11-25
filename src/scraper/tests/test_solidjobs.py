@@ -30,6 +30,7 @@ def calls(monkeypatch: pytest.MonkeyPatch) -> list[dict]:
         return FakeResponse(PAGES[params["pageIndex"]])
 
     monkeypatch.setattr(solidjobs.requests, "get", fake_get)
+    monkeypatch.setattr(solidjobs.time, "sleep", lambda seconds: None)
     return calls
 
 

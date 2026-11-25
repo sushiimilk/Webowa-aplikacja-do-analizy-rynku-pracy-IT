@@ -8,10 +8,12 @@ from rynekit_scraper.db import RawOfferWriter, connect
 from rynekit_scraper.models import RawOffer
 from rynekit_scraper.sources import OfferSource
 from rynekit_scraper.sources.remoteok import RemoteOkSource
+from rynekit_scraper.sources.solidjobs import SolidJobsSource
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_USER_AGENT = "RynekIT-scraper/0.1 (projekt inzynierski)"
+DEFAULT_USER_AGENT = "ProjektInzynierski-UKEN-RynekIT/1.0 (s168676@student.uken.krakow.pl)"
+SOLIDJOBS_CAMPAIGN = "projektinzynierski-uken-rynekit"
 
 def run(sources: list[OfferSource], save: Callable[[RawOffer], None]) -> int:
     count = 0
@@ -31,7 +33,10 @@ def main() -> None:
 
     user_agent = os.environ.get("SCRAPER_USER_AGENT", DEFAULT_USER_AGENT)
 
-    sources = [RemoteOkSource(user_agent)]
+    sources = [
+        RemoteOkSource(user_agent),
+        SolidJobsSource(user_agent, campaign=SOLIDJOBS_CAMPAIGN),
+    ]
 
     with connect() as connection:
         writer = RawOfferWriter(connection)
