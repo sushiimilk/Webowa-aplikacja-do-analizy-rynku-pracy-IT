@@ -37,7 +37,7 @@ Scraper zapisuje do bazy, więc przed `rynekit-scraper`:
 rynekit-scraper
 ```
 
-Wynik: `Pobrano ofert: 99 (nowe: …, zaktualizowane: …)`. Ponowne uruchomienie nie tworzy duplikatów – znane oferty są aktualizowane (`MERGE`, patrz `docs/schemat-bazy.md`). Gdy źródło nie odpowiada, błąd trafia do logu, a pozostałe źródła działają dalej.
+Wynik: `Pobrano ofert: ~1500 (nowe: …, zaktualizowane: …)` – ok. 100 z Remote OK i ok. 1400 z SOLID.Jobs. Pobieranie trwa kilka sekund (SOLID: 3 strony z 1 s przerwy). Ponowne uruchomienie nie tworzy duplikatów – znane oferty są aktualizowane (`MERGE`, patrz `docs/schemat-bazy.md`). Gdy źródło nie odpowiada, błąd trafia do logu, a pozostałe źródła działają dalej.
 
 Scraper łączy się z `127.0.0.1`, a nie `localhost` – na części komputerów `localhost` wybiera IPv6 (`::1`), na którym kontener nie nasłuchuje, i połączenie kończy się timeoutem.
 
